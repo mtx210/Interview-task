@@ -1,4 +1,4 @@
-package com.murbanowicz.interviewtask.api.data.entity;
+package com.murbanowicz.interviewtask.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

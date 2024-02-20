@@ -4,14 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.sql.Date;
-import java.time.Duration;
+import java.time.LocalDate;
 
 @Data
 @Builder
 public class SchoolTime {
 
-    private Date date;
-    private Duration paidTimeInSchool;
+    private LocalDate date;
+    private int paidTimeInSchoolInHours;
     private BigDecimal paymentAmount;
 }

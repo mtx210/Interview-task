@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public class ParentStatementResponse {
 
+    private String schoolName;
     private Parent parent;
     private Month paymentMonth;
     private BigDecimal paymentAmountTotal;

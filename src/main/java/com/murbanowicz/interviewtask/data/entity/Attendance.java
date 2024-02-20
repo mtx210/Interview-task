@@ -1,9 +1,9 @@
-package com.murbanowicz.interviewtask.api.data.entity;
+package com.murbanowicz.interviewtask.data.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -13,8 +13,8 @@ public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private Date entryDate;
-    private Date exitDate;
+    private LocalDateTime entryDate;
+    private LocalDateTime exitDate;
     @ManyToOne
     @JoinColumn(name = "child_id", nullable = false)
     private Child child;

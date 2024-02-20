@@ -9,17 +9,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Month;
 
-@RestController("/api/statements/month")
+@RestController("/api/statements")
 public class StatementsController {
 
     @GetMapping("/school/{id}")
-    public SchoolStatementResponse getSchoolMonthlyStatement(@PathVariable Long id, @RequestParam Month month) {
+    public SchoolStatementResponse getSchoolMonthlyStatement(
+            @PathVariable Long id,
+            @RequestParam Month month
+    ) {
         // todo
         return SchoolStatementResponse.builder().build();
     }
 
-    @GetMapping("/parent/{id}")
-    public ParentStatementResponse getParentMonthlyStatement(@PathVariable Long id, @RequestParam Month month) {
+    @GetMapping("/school/{schoolId}/parent/{parentId}")
+    public ParentStatementResponse getParentMonthlyStatement(
+            @PathVariable Long schoolId,
+            @PathVariable Long parentId,
+            @RequestParam Month month
+    ) {
         // todo
         return ParentStatementResponse.builder().build();
     }
