@@ -1,13 +1,16 @@
 package com.murbanowicz.interviewtask.data.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Attendance {
 
     @Id
