@@ -28,3 +28,4 @@ query params: year, month
 example: `/api/statements/school/123/parent/2?year=2024&month=2`
 
 # DB info
+![database-pseudo-schema](https://github.com/mtx210/Interview-task/assets/38227623/666c3724-905c-4c80-b420-162086c28ef4)
