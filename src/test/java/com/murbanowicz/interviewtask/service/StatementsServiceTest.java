@@ -5,15 +5,15 @@ import com.murbanowicz.interviewtask.data.entity.Attendance;
 import com.murbanowicz.interviewtask.data.entity.Child;
 import com.murbanowicz.interviewtask.data.entity.Parent;
 import com.murbanowicz.interviewtask.data.entity.School;
+import com.murbanowicz.interviewtask.data.repository.AttendanceRepository;
 import com.murbanowicz.interviewtask.data.repository.ChildRepository;
 import com.murbanowicz.interviewtask.data.repository.ParentRepository;
 import com.murbanowicz.interviewtask.data.repository.SchoolRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,24 +21,25 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class StatementsServiceTest {
 
-    @Autowired
+    @InjectMocks
     private StatementsService statementsService;
-    @MockBean
+    @Mock
     private ParentRepository parentRepository;
-    @MockBean
+    @Mock
     private SchoolRepository schoolRepository;
-    @MockBean
+    @Mock
     private ChildRepository childRepository;
-    @MockBean
+    @Mock
+    private AttendanceRepository attendanceRepository;
+    @Mock
     private AttendanceService attendanceService;
 
     @Test
@@ -49,7 +50,7 @@ class StatementsServiceTest {
                         .hourPrice(BigDecimal.valueOf(12.50))
                         .build()));
 
-        when(childRepository.findChildrenWithAttendancesSchoolId(any(), any(), any()))
+        when(childRepository.findChildrenBySchoolId(any()))
                 .thenReturn(List.of(
                         Child.builder()
                                 .firstName("Adam")
@@ -58,36 +59,39 @@ class StatementsServiceTest {
                                         .firstName("Pawel")
                                         .lastName("Pawlowski")
                                         .build())
-                                .attendances(Set.of(
-                                        Attendance.builder()
-                                                .entryDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        2,
-                                                        5,
-                                                        30))
-                                                .exitDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        2,
-                                                        14,
-                                                        30))
-                                                .build(),
-                                        Attendance.builder()
-                                                .entryDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        3,
-                                                        6,
-                                                        30))
-                                                .exitDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        3,
-                                                        11,
-                                                        30))
-                                                .build()))
                                 .build()));
+
+        when(attendanceRepository.findAttendanceByChildIdAndEntryDateBetween(any(), any(), any()))
+                .thenReturn(List.of(
+                        Attendance.builder()
+                                .entryDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        2,
+                                        5,
+                                        30))
+                                .exitDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        2,
+                                        14,
+                                        30))
+                                .build(),
+                        Attendance.builder()
+                                .entryDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        3,
+                                        6,
+                                        30))
+                                .exitDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        3,
+                                        11,
+                                        30))
+                                .build()
+                ));
 
         when(attendanceService.validateAttendance(any()))
                 .thenReturn(true);
@@ -131,41 +135,44 @@ class StatementsServiceTest {
                         .lastName("Jackowski")
                         .build()));
 
-        when(childRepository.findChildrenWithAttendancesByParentIdAndSchoolId(any(), any(), any(), any()))
+        when(childRepository.findChildrenByParentIdAndSchoolId(any(), any()))
                 .thenReturn(List.of(
                         Child.builder()
                                 .firstName("Jan")
                                 .lastName("Janowski")
-                                .attendances(Set.of(
-                                        Attendance.builder()
-                                                .entryDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        5,
-                                                        8,
-                                                        30))
-                                                .exitDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        5,
-                                                        11,
-                                                        30))
-                                                .build(),
-                                        Attendance.builder()
-                                                .entryDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        6,
-                                                        5,
-                                                        30))
-                                                .exitDate(LocalDateTime.of(
-                                                        2024,
-                                                        2,
-                                                        6,
-                                                        16,
-                                                        30))
-                                                .build()))
                                 .build()));
+
+        when(attendanceRepository.findAttendanceByChildIdAndEntryDateBetween(any(), any(), any()))
+                .thenReturn(List.of(
+                        Attendance.builder()
+                                .entryDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        5,
+                                        8,
+                                        30))
+                                .exitDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        5,
+                                        11,
+                                        30))
+                                .build(),
+                        Attendance.builder()
+                                .entryDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        6,
+                                        5,
+                                        30))
+                                .exitDate(LocalDateTime.of(
+                                        2024,
+                                        2,
+                                        6,
+                                        16,
+                                        30))
+                                .build()
+                ));
 
         when(attendanceService.validateAttendance(any()))
                 .thenReturn(true);

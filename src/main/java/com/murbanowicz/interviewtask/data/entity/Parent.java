@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Entity
 @Table
 @Data
@@ -21,6 +19,4 @@ public class Parent {
     private Long id;
     private String firstName;
     private String lastName;
-    @OneToMany(mappedBy = "parent")
-    private Set<Child> children;
 }

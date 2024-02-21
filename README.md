@@ -9,6 +9,7 @@ to read information about payments
 - while probably nobody leaves a child at school at 1am nor picks it up at 11pm, it is not verified, as
 long as entry and exit dates are on the same day and exit date is later in time than entry date, service is working
 - database of choice here is H2 with in-memory setting and DDL and DML scripts to set it up for verification purposes
+- year parameter validation is set to 2024+ implying earliest service deployment date
 
 # Technologies and tools used
 - Java 17

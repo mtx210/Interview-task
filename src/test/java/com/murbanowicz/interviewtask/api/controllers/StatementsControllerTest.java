@@ -51,6 +51,9 @@ class StatementsControllerTest {
     private static Stream<Arguments> getSchoolMonthlyStatement_contractTestArguments() {
         return Stream.of(
                 Arguments.of(200, 1, Map.of("year", "2024", "month", "2")),
+                Arguments.of(400, 1, Map.of("year", "2024", "month", "0")),
+                Arguments.of(400, 1, Map.of("year", "2024", "month", "13")),
+                Arguments.of(400, 1, Map.of("year", "2024", "month", "abc")),
                 Arguments.of(400, 1, Map.of("year", "2024")),
                 Arguments.of(400, 1, Map.of("month", "2")),
                 Arguments.of(400, 1, Map.of())
@@ -92,6 +95,9 @@ class StatementsControllerTest {
     private static Stream<Arguments> getParentMonthlyStatement_contractTestArguments() {
         return Stream.of(
                 Arguments.of(200, 1, 1, Map.of("year", "2024", "month", "2")),
+                Arguments.of(400, 1, 1, Map.of("year", "2024", "month", "0")),
+                Arguments.of(400, 1, 1, Map.of("year", "2024", "month", "13")),
+                Arguments.of(400, 1, 1, Map.of("year", "2024", "month", "abc")),
                 Arguments.of(400, 1, 1, Map.of("year", "2024")),
                 Arguments.of(400, 1, 1, Map.of("month", "2")),
                 Arguments.of(400, 1, 1, Map.of())

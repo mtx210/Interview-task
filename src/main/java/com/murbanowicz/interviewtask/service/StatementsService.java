@@ -5,6 +5,7 @@ import com.murbanowicz.interviewtask.data.entity.Attendance;
 import com.murbanowicz.interviewtask.data.entity.Child;
 import com.murbanowicz.interviewtask.data.entity.Parent;
 import com.murbanowicz.interviewtask.data.entity.School;
+import com.murbanowicz.interviewtask.data.repository.AttendanceRepository;
 import com.murbanowicz.interviewtask.data.repository.ChildRepository;
 import com.murbanowicz.interviewtask.data.repository.ParentRepository;
 import com.murbanowicz.interviewtask.data.repository.SchoolRepository;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class StatementsService {
     private final ParentRepository parentRepository;
     private final SchoolRepository schoolRepository;
     private final ChildRepository childRepository;
+    private final AttendanceRepository attendanceRepository;
     private final AttendanceService attendanceService;
 
     public SchoolStatementResponse getStatementForSchool(Long schoolId, int year, int month) {
@@ -43,27 +44,19 @@ public class StatementsService {
                 .build();
     }
 
-    private List<StatementDetails> buildStatementDetails(
-            Long schoolId,
-            YearMonth statementMonth,
-            BigDecimal schoolHourRate
+    private List<StatementDetails> buildStatementDetails(Long schoolId, YearMonth statementMonth,
+                                                         BigDecimal schoolHourRate
     ) {
         LocalDateTime monthStart = statementMonth.atDay(1).atStartOfDay();
         LocalDateTime monthEnd = statementMonth.atEndOfMonth().atTime(23,59,59);
 
-        List<Child> childrenWithAttendances = childRepository.findChildrenWithAttendancesSchoolId(
-                schoolId,
-                monthStart,
-                monthEnd
-        );
-
-        return childrenWithAttendances.stream()
+        return childRepository.findChildrenBySchoolId(schoolId).stream()
                 .map(child -> StatementDetails.builder()
                         .childName(child.getFirstName())
                         .childLastName(child.getLastName())
                         .parentName(child.getParent().getFirstName())
                         .parentLastName(child.getParent().getLastName())
-                        .schoolTime(buildSchoolTime(child, schoolHourRate))
+                        .schoolTime(buildSchoolTime(child, monthStart, monthEnd, schoolHourRate))
                         .build())
                 .toList();
     }
@@ -97,33 +90,26 @@ public class StatementsService {
                 .build();
     }
 
-    private List<PaymentDetails> buildPaymentDetails(
-            Long parentId,
-            Long schoolId,
-            YearMonth statementMonth,
-            BigDecimal schoolHourRate
+    private List<PaymentDetails> buildPaymentDetails(Long parentId, Long schoolId,
+                                                     YearMonth statementMonth, BigDecimal schoolHourRate
     ) {
         LocalDateTime monthStart = statementMonth.atDay(1).atStartOfDay();
         LocalDateTime monthEnd = statementMonth.atEndOfMonth().atTime(23,59,59);
 
-        List<Child> childrenWithAttendances = childRepository.findChildrenWithAttendancesByParentIdAndSchoolId(
-                parentId,
-                schoolId,
-                monthStart,
-                monthEnd
-        );
-
-        return childrenWithAttendances.stream()
+        return childRepository.findChildrenByParentIdAndSchoolId(parentId, schoolId).stream()
                 .map(child -> PaymentDetails.builder()
                         .childName(child.getFirstName())
                         .childLastName(child.getLastName())
-                        .schoolTime(buildSchoolTime(child, schoolHourRate))
+                        .schoolTime(buildSchoolTime(child, monthStart, monthEnd, schoolHourRate))
                         .build())
                 .toList();
     }
 
-    private List<SchoolTime> buildSchoolTime(Child child, BigDecimal schoolHourRate) {
-        return child.getAttendances().stream()
+    private List<SchoolTime> buildSchoolTime(Child child, LocalDateTime monthStart,
+                                             LocalDateTime monthEnd, BigDecimal schoolHourRate
+    ) {
+        return attendanceRepository.findAttendanceByChildIdAndEntryDateBetween(child.getId(), monthStart, monthEnd)
+                .stream()
                 .filter(attendanceService::validateAttendance)
                 .map(attendance -> buildSchoolTimeElement(attendance, schoolHourRate))
                 .toList();

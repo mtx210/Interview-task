@@ -1,0 +1,76 @@
+{
+	"info": {
+		"_postman_id": "73786232-f216-483a-9b0b-ba5025b6860f",
+		"name": "Endpoints collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10010882"
+	},
+	"item": [
+		{
+			"name": "parent statement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/statements/school/1/parent/1?year=&month=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"statements",
+						"school",
+						"1",
+						"parent",
+						"1"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": ""
+						},
+						{
+							"key": "month",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "school statement",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/statements/school/1?year=&month=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"statements",
+						"school",
+						"1"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": ""
+						},
+						{
+							"key": "month",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

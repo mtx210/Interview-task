@@ -11,7 +11,6 @@ public class AttendanceService {
     private final LocalTime FREE_PERIOD_BEGIN_TIME = LocalTime.of(7,0,0);
     private final LocalTime FREE_PERIOD_END_TIME = LocalTime.of(12,0,0);
 
-    // todo zmienic na iterator godzin w dobie ze sprawdzaniem czy godzina nalezy do darmowych ktore sa w propertiesach
     public int mapToPaidHours(Attendance attendance) {
         LocalTime entryTime = attendance.getEntryDate().toLocalTime();
         LocalTime exitTime = attendance.getExitDate().toLocalTime();

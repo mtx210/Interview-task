@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS school
 (
     id         INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     name       VARCHAR(255)                   NOT NULL,
-    hour_price NUMERIC                        NOT NULL
+    hour_price NUMERIC(6,2)                   NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS parent
