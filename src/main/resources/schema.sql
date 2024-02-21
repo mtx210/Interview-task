@@ -8,15 +8,15 @@ CREATE TABLE IF NOT EXISTS school
 CREATE TABLE IF NOT EXISTS parent
 (
     id        INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    firstName VARCHAR(20)                    NOT NULL,
-    lastName  VARCHAR(50)                    NOT NULL
+    first_name VARCHAR(20)                    NOT NULL,
+    last_name  VARCHAR(50)                    NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS child
 (
     id        INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    firstName VARCHAR(20)                    NOT NULL,
-    lastName  VARCHAR(50)                    NOT NULL,
+    first_name VARCHAR(20)                    NOT NULL,
+    last_name  VARCHAR(50)                    NOT NULL,
     parent_id INT                            NOT NULL,
     school_id INT                            NOT NULL,
     FOREIGN KEY (parent_id) REFERENCES parent (id),

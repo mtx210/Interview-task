@@ -25,9 +25,7 @@ public class StatementsService {
     private final ParentRepository parentRepository;
     private final SchoolRepository schoolRepository;
     private final ChildRepository childRepository;
-
-    private final LocalTime FREE_PERIOD_BEGIN_TIME = LocalTime.of(7,0,0);
-    private final LocalTime FREE_PERIOD_END_TIME = LocalTime.of(12,0,0);
+    private final AttendanceService attendanceService;
 
     public SchoolStatementResponse getStatementForSchool(Long schoolId, int year, int month) {
         School school = schoolRepository.findById(schoolId)
@@ -126,13 +124,13 @@ public class StatementsService {
 
     private List<SchoolTime> buildSchoolTime(Child child, BigDecimal schoolHourRate) {
         return child.getAttendances().stream()
-                .filter(this::validateAttendance)
+                .filter(attendanceService::validateAttendance)
                 .map(attendance -> buildSchoolTimeElement(attendance, schoolHourRate))
                 .toList();
     }
 
     private SchoolTime buildSchoolTimeElement(Attendance attendance, BigDecimal schoolHourRate) {
-        final int paidHoursAmount = mapToPaidHours(attendance);
+        final int paidHoursAmount = attendanceService.mapToPaidHours(attendance);
 
         return SchoolTime.builder()
                 .date(attendance.getEntryDate().toLocalDate())
@@ -146,56 +144,5 @@ public class StatementsService {
                 .flatMap(paymentDetailsElement -> paymentDetailsElement.getSchoolTime().stream())
                 .map(SchoolTime::getPaymentAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private boolean validateAttendance(Attendance attendance) {
-        return attendance.getEntryDate().isBefore(attendance.getExitDate()) &&
-                attendance.getExitDate().getDayOfYear() == attendance.getEntryDate().getDayOfYear();
-    }
-
-    // todo zmienic na iterator godzin w dobie ze sprawdzaniem czy godzina nalezy do darmowych ktore sa w propertiesach
-    private int mapToPaidHours(Attendance attendance) {
-        LocalTime entryTime = attendance.getEntryDate().toLocalTime();
-        LocalTime exitTime = attendance.getExitDate().toLocalTime();
-
-        if (entryTime.isBefore(FREE_PERIOD_BEGIN_TIME)) {
-            if (exitTime.isBefore(FREE_PERIOD_BEGIN_TIME)) {
-                return calculateHoursInMorningPeriod(entryTime, exitTime);
-            } else if (exitTime.isBefore(FREE_PERIOD_END_TIME)) {
-                return calculateHoursInMorningPeriod(entryTime, FREE_PERIOD_BEGIN_TIME);
-            } else {
-                return calculateHoursInMorningPeriod(entryTime, FREE_PERIOD_BEGIN_TIME)
-                        + calculateHoursInAfternoonPeriod(FREE_PERIOD_END_TIME, exitTime);
-            }
-        } else if (entryTime.isBefore(FREE_PERIOD_END_TIME)) {
-            if (exitTime.isBefore(FREE_PERIOD_END_TIME)) {
-                return 0;
-            } else {
-                return calculateHoursInAfternoonPeriod(FREE_PERIOD_END_TIME, exitTime);
-            }
-        } else {
-            return calculateHoursInAfternoonPeriod(entryTime, exitTime);
-        }
-    }
-
-    // 5:00:00 - 5:59:59
-    //
-    // 4:00:30
-    // 6:30:20
-    //
-    private int calculateHoursInMorningPeriod(LocalTime entryTime, LocalTime exitTime) {
-        return exitTime.getHour() - entryTime.getHour() + 1;
-    }
-
-    // 12:01:00 - 13:00:59
-    //
-    // 12:00:30
-    // 14:30:00
-    //
-    private int calculateHoursInAfternoonPeriod(LocalTime entryTime, LocalTime exitTime) {
-        return calculateHoursInMorningPeriod(
-                entryTime.plusMinutes(1),
-                exitTime.plusMinutes(1)
-        );
     }
 }

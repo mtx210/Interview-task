@@ -4,12 +4,10 @@ import com.murbanowicz.interviewtask.api.dto.response.ParentStatementResponse;
 import com.murbanowicz.interviewtask.api.dto.response.SchoolStatementResponse;
 import com.murbanowicz.interviewtask.service.StatementsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController("/api/statements")
+@RestController
+@RequestMapping("/api/statements")
 @RequiredArgsConstructor
 public class StatementsController {
 
