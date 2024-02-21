@@ -12,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/statements/school/1/parent/1?year=&month=",
+					"raw": "http://localhost:8080/api/statements/school/:schoolID/parent/:parentID?year=2024&month=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -22,18 +22,28 @@
 						"api",
 						"statements",
 						"school",
-						"1",
+						":schoolID",
 						"parent",
-						"1"
+						":parentID"
 					],
 					"query": [
 						{
 							"key": "year",
-							"value": ""
+							"value": "2024"
 						},
 						{
 							"key": "month",
-							"value": ""
+							"value": "2"
+						}
+					],
+					"variable": [
+						{
+							"key": "schoolID",
+							"value": "1"
+						},
+						{
+							"key": "parentID",
+							"value": "1"
 						}
 					]
 				}
@@ -46,7 +56,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/statements/school/1?year=&month=",
+					"raw": "http://localhost:8080/api/statements/school/:schoolID?year=2024&month=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -56,16 +66,22 @@
 						"api",
 						"statements",
 						"school",
-						"1"
+						":schoolID"
 					],
 					"query": [
 						{
 							"key": "year",
-							"value": ""
+							"value": "2024"
 						},
 						{
 							"key": "month",
-							"value": ""
+							"value": "2"
+						}
+					],
+					"variable": [
+						{
+							"key": "schoolID",
+							"value": "1"
 						}
 					]
 				}
