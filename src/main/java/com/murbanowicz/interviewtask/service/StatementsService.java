@@ -1,7 +1,6 @@
 package com.murbanowicz.interviewtask.service;
 
-import com.murbanowicz.interviewtask.api.dto.response.SchoolStatementResponse;
-import com.murbanowicz.interviewtask.api.dto.response.SchoolTime;
+import com.murbanowicz.interviewtask.api.dto.response.*;
 import com.murbanowicz.interviewtask.data.entity.Attendance;
 import com.murbanowicz.interviewtask.data.entity.Child;
 import com.murbanowicz.interviewtask.data.entity.Parent;
@@ -9,8 +8,6 @@ import com.murbanowicz.interviewtask.data.entity.School;
 import com.murbanowicz.interviewtask.data.repository.ChildRepository;
 import com.murbanowicz.interviewtask.data.repository.ParentRepository;
 import com.murbanowicz.interviewtask.data.repository.SchoolRepository;
-import com.murbanowicz.interviewtask.api.dto.response.ParentStatementResponse;
-import com.murbanowicz.interviewtask.api.dto.response.PaymentDetails;
 import com.murbanowicz.interviewtask.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -33,9 +29,52 @@ public class StatementsService {
     private final LocalTime FREE_PERIOD_BEGIN_TIME = LocalTime.of(7,0,0);
     private final LocalTime FREE_PERIOD_END_TIME = LocalTime.of(12,0,0);
 
-    public SchoolStatementResponse getStatementForSchool(Long schoolId, Month month) {
-        // todo
-        return SchoolStatementResponse.builder().build();
+    public SchoolStatementResponse getStatementForSchool(Long schoolId, int year, int month) {
+        School school = schoolRepository.findById(schoolId)
+                .orElseThrow(() -> new ResourceNotFoundException("School not found for id: " + schoolId));
+        BigDecimal schoolHourRate = school.getHourPrice();
+        YearMonth statementMonth = YearMonth.of(year, month);
+
+        List<StatementDetails> statementDetails = buildStatementDetails(schoolId, statementMonth, schoolHourRate);
+
+        return SchoolStatementResponse.builder()
+                .schoolName(school.getName())
+                .statementMonth(statementMonth)
+                .statementAmountTotal(buildStatementAmountTotal(statementDetails))
+                .statementDetails(statementDetails)
+                .build();
+    }
+
+    private List<StatementDetails> buildStatementDetails(
+            Long schoolId,
+            YearMonth statementMonth,
+            BigDecimal schoolHourRate
+    ) {
+        LocalDateTime monthStart = statementMonth.atDay(1).atStartOfDay();
+        LocalDateTime monthEnd = statementMonth.atEndOfMonth().atTime(23,59,59);
+
+        List<Child> childrenWithAttendances = childRepository.findChildrenWithAttendancesSchoolId(
+                schoolId,
+                monthStart,
+                monthEnd
+        );
+
+        return childrenWithAttendances.stream()
+                .map(child -> StatementDetails.builder()
+                        .childName(child.getFirstName())
+                        .childLastName(child.getLastName())
+                        .parentName(child.getParent().getFirstName())
+                        .parentLastName(child.getParent().getLastName())
+                        .schoolTime(buildSchoolTime(child, schoolHourRate))
+                        .build())
+                .toList();
+    }
+
+    private BigDecimal buildStatementAmountTotal(List<StatementDetails> statementDetails) {
+        return statementDetails.stream()
+                .flatMap(statementDetailsElement -> statementDetailsElement.getSchoolTime().stream())
+                .map(SchoolTime::getPaymentAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public ParentStatementResponse getStatementForParent(Long schoolId, Long parentId, int year, int month) {

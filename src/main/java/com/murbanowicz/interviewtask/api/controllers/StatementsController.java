@@ -15,14 +15,13 @@ public class StatementsController {
 
     private final StatementsService statementsService;
 
-    @GetMapping("/school/{id}")
+    @GetMapping("/school/{schoolId}")
     public SchoolStatementResponse getSchoolMonthlyStatement(
-            @PathVariable Long id,
+            @PathVariable Long schoolId,
             @RequestParam int year,
             @RequestParam int month
     ) {
-        // todo
-        return SchoolStatementResponse.builder().build();
+        return statementsService.getStatementForSchool(schoolId, year, month);
     }
 
     @GetMapping("/school/{schoolId}/parent/{parentId}")

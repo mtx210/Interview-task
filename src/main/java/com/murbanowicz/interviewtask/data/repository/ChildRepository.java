@@ -21,4 +21,14 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+
+    @Query("SELECT c FROM Child c " +
+            "JOIN FETCH c.attendances a " +
+            "WHERE c.school.id = :schoolId " +
+            "AND a.entryDate BETWEEN :startDate AND :endDate")
+    List<Child> findChildrenWithAttendancesSchoolId(
+            @Param("schoolId") Long schoolId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
+    );
 }
