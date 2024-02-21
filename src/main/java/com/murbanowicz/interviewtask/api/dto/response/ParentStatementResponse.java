@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.Month;
+import java.time.YearMonth;
 import java.util.List;
 
 @Data
@@ -13,7 +13,7 @@ public class ParentStatementResponse {
 
     private String schoolName;
     private Parent parent;
-    private Month paymentMonth;
+    private YearMonth paymentMonth;
     private BigDecimal paymentAmountTotal;
     private List<PaymentDetails> paymentDetails;
 }
