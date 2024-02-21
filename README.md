@@ -21,6 +21,17 @@ long as entry and exit dates are on the same day and exit date is later in time 
 - JUnit, Mockito, RestAssured
 - IntelliJ IDEA, Maven, Git
 
+# Running in Docker
+Build the application jar file
+```
+mvn clean package
+```
+Edit Docker run configuration in IntelliJ to use -p 8080:8080 parameter or run from cmd
+```
+docker image build -t backend_image .
+docker container run -p 8080:8080 --name backend_container backend_image
+```
+
 # API info
 
 ### Endpoints
